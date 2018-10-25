@@ -1,0 +1,8 @@
+github.com/alicebob/gopher-json v0.0.0-20180125190556-5a6b3ba71ee6 h1:45bxf7AZMwWcqkLzDAQugVEwedisr5nRJ1r+7LYnv0U=
+github.com/alicebob/gopher-json v0.0.0-20180125190556-5a6b3ba71ee6/go.mod h1:SGnFV6hVsYE877CKEZ6tDNTjaSXYUk6QqoIK6PrAtcc=
+github.com/alicebob/miniredis v2.4.5+incompatible h1:Ml+i18wdJPeO/AqNQYpaDyStCAh7TKwLUiaUaQx0yhs=
+github.com/alicebob/miniredis v2.4.5+incompatible/go.mod h1:8HZjEj4yU0dwhYHky+DxYx+6BMjkBbe5ONFIF1MXffk=
+github.com/gomodule/redigo v2.0.0+incompatible h1:K/R+8tc58AaqLkqG2Ol3Qk+DR/TlNuhuh457pBFPtt0=
+github.com/gomodule/redigo v2.0.0+incompatible/go.mod h1:B4C85qUVwatsJoIUNIfCRsp7qO0iAmpGFZ4EELWSbC4=
+github.com/yuin/gopher-lua v0.0.0-20181024100033-f7ea7b13e9a5 h1:DRzicnkkFMX91YR/Z6icB1gSRt8POiE7+EhQqVZVTFc=
+github.com/yuin/gopher-lua v0.0.0-20181024100033-f7ea7b13e9a5/go.mod h1:aEV29XrmTYFr3CiRxZeGHpkvbwq+prZduBqMaascyCU=
