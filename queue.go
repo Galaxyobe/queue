@@ -7,7 +7,6 @@ import (
 	"sync"
 	"fmt"
 	"errors"
-	"log"
 )
 
 // queue interface
@@ -75,7 +74,6 @@ func (q *Queue) Push(name string, data interface{}) error {
 // pop the the data and parse the type, get the type function handle
 // the raw data, when function return true will remove the record
 func (q *Queue) Done(ctx context.Context) {
-	id := 0
 	for {
 		select {
 		case <-ctx.Done():
@@ -93,16 +91,13 @@ func (q *Queue) Done(ctx context.Context) {
 		}
 		// put chan for one goroutine
 		q.maxConcurrency <- struct{}{}
-		id++
-		log.Println(id, "<-", data)
 		// run goroutine handle data
-		go func(id int, data string) {
+		go func(data string) {
 
 			defer func() {
 				// get recover
 				if e := recover(); e != nil {
 				}
-				log.Println(id, "->", data)
 				// out chan
 				<-q.maxConcurrency
 			}()
@@ -116,10 +111,9 @@ func (q *Queue) Done(ctx context.Context) {
 					if handle(dataType[1]) {
 						// handle succeed remove the data
 						q.Remove(data)
-						log.Println(id, "remove", data)
 					}
 				}
 			}
-		}(id, data)
+		}(data)
 	}
 }
