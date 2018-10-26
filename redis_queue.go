@@ -108,13 +108,13 @@ func (q *RedisQueue) Pop(timeout uint64) (interface{}, error) {
 
 // remove the last element of private key
 // if private key list is empty will get the redis ErrNil error
-func (q *RedisQueue) Remove() error {
+func (q *RedisQueue) Remove(data interface{}) error {
 	// redis conn
 	conn := q.pool.Get()
 	defer conn.Close()
 
 	// pop up the first element of the list.
-	reply, err := conn.Do("RPOP", q.privateKey)
+	reply, err := conn.Do("LREM", q.privateKey, -1, data)
 
 	if reply == nil {
 		return redis.ErrNil

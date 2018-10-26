@@ -7,6 +7,7 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/alicebob/miniredis"
 	"context"
+	"math/rand"
 )
 
 func TestQueue_Push(t *testing.T) {
@@ -127,12 +128,13 @@ func TestQueue_Done(t *testing.T) {
 	now := time.Now()
 
 	q.Push("time", now.Format(time.RFC3339Nano))
-
+	rand.Seed(time.Now().UnixNano())
 	q.RegisterDataHandleFunc(tpy, func(s string) bool {
 		if now, err := time.Parse(time.RFC3339Nano, s); err != nil {
 			return false
 		} else {
-			time.Sleep(time.Second * 5)
+			n := rand.Int31n(5)
+			time.Sleep(time.Second * time.Duration(n))
 			if n, err := time.Parse(time.RFC3339Nano, s); err != nil {
 				t.Error(err)
 			} else if !n.Equal(now) {
@@ -150,7 +152,7 @@ func TestQueue_Done(t *testing.T) {
 			case <-ctx.Done():
 				return
 			default:
-				q.Push("time", time.Now().Format(time.RFC3339))
+				q.Push("time", time.Now().Format(time.RFC3339Nano))
 				time.Sleep(time.Second)
 			}
 		}
@@ -181,7 +183,7 @@ func TestQueue_Done(t *testing.T) {
 
 	if l, err := s.List(queue.privateKey); err != nil && err != miniredis.ErrKeyNotFound {
 		t.Error(err)
-	} else if len(l) == 0 {
-		t.Error("privateKey should have some data", l)
+	} else if len(l) != 0 {
+		t.Error("privateKey should not have some data", l)
 	}
 }

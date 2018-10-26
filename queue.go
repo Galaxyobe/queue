@@ -7,13 +7,14 @@ import (
 	"sync"
 	"fmt"
 	"errors"
+	"log"
 )
 
 // queue interface
 type IQueue interface {
 	Push(data interface{}) error
 	Pop(timeout uint64) (interface{}, error)
-	Remove() error
+	Remove(data interface{}) error
 }
 
 // mark is queue data
@@ -74,7 +75,7 @@ func (q *Queue) Push(name string, data interface{}) error {
 // pop the the data and parse the type, get the type function handle
 // the raw data, when function return true will remove the record
 func (q *Queue) Done(ctx context.Context) {
-
+	id := 0
 	for {
 		select {
 		case <-ctx.Done():
@@ -82,7 +83,7 @@ func (q *Queue) Done(ctx context.Context) {
 		default:
 		}
 		// pop data with timeout
-		data, err := redis.String(q.Pop(3))
+		data, err := redis.String(q.Pop(1))
 		if err != nil {
 			continue
 		}
@@ -92,13 +93,16 @@ func (q *Queue) Done(ctx context.Context) {
 		}
 		// put chan for one goroutine
 		q.maxConcurrency <- struct{}{}
+		id++
+		log.Println(id, "<-", data)
 		// run goroutine handle data
-		go func(data string) {
+		go func(id int, data string) {
 
 			defer func() {
 				// get recover
 				if e := recover(); e != nil {
 				}
+				log.Println(id, "->", data)
 				// out chan
 				<-q.maxConcurrency
 			}()
@@ -111,10 +115,11 @@ func (q *Queue) Done(ctx context.Context) {
 				if handle, ok := f.(HandleFunc); ok {
 					if handle(dataType[1]) {
 						// handle succeed remove the data
-						q.Remove()
+						q.Remove(data)
+						log.Println(id, "remove", data)
 					}
 				}
 			}
-		}(data)
+		}(id, data)
 	}
 }
